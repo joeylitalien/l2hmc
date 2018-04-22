@@ -1,2 +1,4 @@
-# ift6135-l2hmc
-Generalizing Hamiltonian Monte Carlo with Neural Network
+# ICLR 2018 Reproducibility Challenge
+## [*Generalizing Hamiltonian Monte Carlo with Neural Networks*](https://arxiv.org/abs/1711.09268) 
+L2HMC: Automatic Training of MCMC Samplers
+
