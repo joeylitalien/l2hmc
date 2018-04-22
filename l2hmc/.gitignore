@@ -1,0 +1,8 @@
+*.pyc
+logs/
+MNIST_data/
+gpu*
+.ipynb_checkpoints/
+*.sh
+toy_tasks/
+*.npy
