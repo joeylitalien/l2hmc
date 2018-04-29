@@ -22,7 +22,9 @@ from __future__ import print_function
 
 import time, sys, string, os
 
+import os
 import tensorflow as tf
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import numpy as np
 
 from utils.func_utils import accept, jacobian, autocovariance, get_log_likelihood, get_data,\
@@ -74,12 +76,17 @@ def main(_):
     del(hps_values['epoch'])
     del(hps_values['eval_samples_every'])
 
+<<<<<<< HEAD
     train_folder = string.join(
         [
             str(k)+'='+str(hps_values[k])
             for k in hps_values
         ],
         ',',
+=======
+    train_folder = ",".join(
+        [str(k)+'='+str(hps_values[k]) for k in hps_values]
+>>>>>>> 9418f91555cd4e164c32ff68a063f675b2cfc94a
     )
 
     logdir = 'logs/%s/%s' % (FLAGS.exp_id, train_folder)
@@ -307,7 +314,11 @@ def main(_):
     for e in range(hps.epoch):
         x_train = binarize_and_shuffle(float_x_train)
 
+<<<<<<< HEAD
         for t in range(batch_per_epoch):
+=======
+        for t in range(int(batch_per_epoch)):
+>>>>>>> 9418f91555cd4e164c32ff68a063f675b2cfc94a
             start = t * hps.batch_size
             end = start + hps.batch_size
 
@@ -324,8 +335,8 @@ def main(_):
             fetched = sess.run(fetches, {inp: batch})
 
             if t % 50 == 0:
-                print 'Step:%d::%d/%d::ELBO: %.3e::Loss sampler: %.3e:: Log prob: %.3e:: Lr: %g:: Time: %.2e' \
-                    % (fetched[4], t, batch_per_epoch, fetched[0], fetched[1], fetched[2], fetched[-2], time.time()-time0)
+                print('Step:%d::%d/%d::ELBO: %.3e::Loss sampler: %.3e:: Log prob: %.3e:: Lr: %g:: Time: %.2e' \
+                    % (fetched[4], t, batch_per_epoch, fetched[0], fetched[1], fetched[2], fetched[-2], time.time()-time0))
                 time0 = time.time()
 
             writer.add_summary(fetched[3], global_step=counter)
@@ -337,14 +348,18 @@ def main(_):
 
     for AS in [64, 256, 1024, 4096, 8192]:
         cmd = 'python eval_vae.py --path "%s/" --split %s --anneal_steps %d'
-        print 'Train fold evaluation. AS steps: %d' % AS
+        print('Train fold evaluation. AS steps: %d' % AS)
         os.system(cmd % (logdir, 'train', AS))
 
-        print 'Test fold evaluation. AS steps: %d' % AS
+        print('Test fold evaluation. AS steps: %d' % AS)
         os.system(cmd % (logdir, 'test', AS))
 
-    print 'Sampler eval'
+    print('Sampler eval')
     os.system('python eval_sampler.py --path "%s"' % logdir)
 
 if __name__ == '__main__':
     tf.app.run(main)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9418f91555cd4e164c32ff68a063f675b2cfc94a

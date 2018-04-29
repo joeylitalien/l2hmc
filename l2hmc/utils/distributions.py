@@ -67,6 +67,39 @@ class Gaussian(object):
   def log_density(self, X):
     return multivariate_normal(mean=self.mu, cov=self.sigma).logpdf(X)
 
+
+class Donut(object):
+
+    def __init__(self, radius, sigma):
+        self.radius = radius
+        self.sigma = sigma
+
+        print(np.linalg.det(self.sigma), self.sigma.dtype)
+        self.i_sigma = np.linalg.inv(np.copy(sigma))
+
+
+    def get_energy_function(self):
+        def fn(x, *args, **kwargs):
+            S = tf.constant(self.i_sigma.astype('float32'))
+            mu = tf.constant(self.mu.astype('float32'))
+
+            G = quadratic_gaussian(x, mu, S)
+            return G
+
+        return fn
+
+
+
+    def get_samples(self, n):
+        C = np.linalg.cholesky(self.sigma)
+        X = np.random.randn(n, self.sigma.shape[0])
+        return X.dot(C.T)
+
+    def log_density(self, x):
+        pass
+
+
+
 class TiltedGaussian(Gaussian):
   def __init__(self, dim, log_min, log_max):
     self.R = ortho_group.rvs(dim)
@@ -196,7 +229,6 @@ class GaussianFunnel(object):
     sum_sq = np.square(x[:, 1:]).sum(axis=1)
     n = tf.shape(x)[1] - 1
     return 0.5 * (log_p_v + sum_sq / s + (n / 2) * tf.log(2 * tf.pi * s))
-
 
 def gen_ring(r=1.0, var=1.0, nb_mixtures=2):
   base_points = []
