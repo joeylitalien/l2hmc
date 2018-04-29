@@ -76,7 +76,7 @@ def main(_):
 
     train_folder = string.join(
         [
-            str(k)+'='+str(hps_values[k]) 
+            str(k)+'='+str(hps_values[k])
             for k in hps_values
         ],
         ',',
@@ -88,7 +88,7 @@ def main(_):
 
     float_x_train, float_x_test = get_data()
     N = float_x_train.shape[0]
-    
+
     with tf.variable_scope('encoder'):
         encoder = Sequential([
             Linear(784, 1024, scope='encoder_1'),
@@ -109,15 +109,15 @@ def main(_):
             tf.nn.softplus,
             Linear(1024, 784, scope='decoder_3', factor=0.01)
         ])
-    
+
     # Setting up the VAE
-    
-    inp = tf.placeholder(tf.float32, shape=(None, 784))    
+
+    inp = tf.placeholder(tf.float32, shape=(None, 784))
     mu, log_sigma = encoder(inp)
     noise = tf.random_normal(tf.shape(mu))
     latent_q = mu + noise * tf.exp(log_sigma)
     logits = decoder(latent_q)
-    
+
     # Setting up sampler
     def energy(z, aux=None):
         logits = decoder(z)
@@ -126,7 +126,7 @@ def main(_):
         return (-log_posterior - log_prior)
     energy_stop_grad = lambda z, aux=None: energy(tf.stop_gradient(z), aux=None)
     sampler_loss = 0.
-    
+
     with tf.variable_scope('sampler'):
         size1 = 200
         size2 = 200
@@ -154,7 +154,7 @@ def main(_):
                     tf.nn.relu,
                     Parallel([
                         Sequential([
-                            Linear(size2, hps.latent_dim, scope='linear_s', factor=0.01), 
+                            Linear(size2, hps.latent_dim, scope='linear_s', factor=0.01),
                             ScaleTanh(hps.latent_dim, scope='scale_s')
                         ]),
                         Linear(size2, hps.latent_dim, scope='linear_t', factor=0.01),
@@ -165,18 +165,18 @@ def main(_):
                     ])
                 ])
             return net
-        
+
         dynamics = Dynamics(
-            hps.latent_dim, 
-            energy, 
-            T=hps.leapfrogs, 
-            eps=hps.eps, 
-            hmc=hps.hmc, 
-            net_factory=net_factory, 
-            eps_trainable=True, 
+            hps.latent_dim,
+            energy,
+            T=hps.leapfrogs,
+            eps=hps.eps,
+            hmc=hps.hmc,
+            net_factory=net_factory,
+            eps_trainable=True,
             use_temperature=False,
         )
-        
+
 
 
     init_x = tf.stop_gradient(latent_q)
@@ -202,11 +202,11 @@ def main(_):
             other_term = 0.
 
             final_x, _, px, MH = propose(init_x, dynamics, aux=inp, do_mh_step=True)
-            
+
             #sampler_loss += 1.0 / hps.MH * loss_mixed(latent, Lx, px, scale=tf.stop_gradient(tf.exp(log_sigma)))
-            
+
         # distance
-        v = tf.square(final_x - init_x) / (tf.stop_gradient(tf.exp(2 * log_sigma)) + 1e-4)    
+        v = tf.square(final_x - init_x) / (tf.stop_gradient(tf.exp(2 * log_sigma)) + 1e-4)
         v = tf.reduce_sum(v, 1) * px + 1e-4
 
         # energy
@@ -223,7 +223,7 @@ def main(_):
 
     sampler_loss = inverse_term + other_term + hps.energy_scale * energy_loss
 
-    
+
     logits_T = decoder(tf.stop_gradient(latent_T))
     partition = tf.constant(np.sqrt((2 * np.pi) ** hps.latent_dim), dtype=tf.float32)
     prior_probs = tf.log(partition) + \
@@ -235,25 +235,25 @@ def main(_):
     kl = normal_kl(mu, tf.exp(log_sigma), 0., 1.)
     bce = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=inp, logits=logits), axis=1)
     elbo = tf.check_numerics(tf.reduce_mean(kl+bce), 'elbo NaN')
-    
+
     batch_per_epoch = N / hps.batch_size
 
     # Setting up train ops
 
     global_step = tf.Variable(0., trainable=False)
     # learning_rate = tf.train.exponential_decay(
-    #     hps.learning_rate, 
+    #     hps.learning_rate,
     #     global_step,
     #     750,
-    #     0.96, 
+    #     0.96,
     #     staircase=True
     # )
-    
+
     learning_rate = tf.train.piecewise_constant(global_step, [batch_per_epoch * 500.], [1e-3, 1e-4])
-    
+
     opt_sampler = tf.train.AdamOptimizer(learning_rate)
     opt = tf.train.AdamOptimizer(learning_rate)
-    
+
     elbo_train_op = opt.minimize(elbo, var_list=var_from_scope('encoder'))
     if not hps.hmc:
         gradients, variables = zip(*opt_sampler.compute_gradients(sampler_loss, var_list=var_from_scope('sampler')))
@@ -274,7 +274,7 @@ def main(_):
     tf.summary.scalar('log_prob', likelihood)
     tf.summary.scalar('elbo', elbo)
     tf.summary.scalar('p_accept', tf.reduce_mean(px))
-    
+
     loss_summaries = tf.summary.merge_all()
 
     # For sample generation
@@ -286,13 +286,13 @@ def main(_):
         tf.reshape(x_eval, (-1, 28, 28, 1)),
         64,
     )
-    
+
     saver = tf.train.Saver()
     writer = tf.summary.FileWriter(logdir)
 
     sess = tf.Session()
     sess.run(tf.global_variables_initializer())
-    
+
     counter = 0
 
     # For graph restore
@@ -306,23 +306,23 @@ def main(_):
     time0 = time.time()
     for e in range(hps.epoch):
         x_train = binarize_and_shuffle(float_x_train)
-        
+
         for t in range(batch_per_epoch):
             start = t * hps.batch_size
             end = start + hps.batch_size
-            
+
             batch = x_train[start:end, :]
-            
+
             fetches = [
                 elbo, sampler_loss, likelihood, loss_summaries, \
                 global_step, elbo_train_op, decoder_train_op, learning_rate
             ]
-                        
+
             if t % hps.update_sampler_every == 0:
                 fetches += [sampler_train_op]
-                
+
             fetched = sess.run(fetches, {inp: batch})
-                        
+
             if t % 50 == 0:
                 print 'Step:%d::%d/%d::ELBO: %.3e::Loss sampler: %.3e:: Log prob: %.3e:: Lr: %g:: Time: %.2e' \
                     % (fetched[4], t, batch_per_epoch, fetched[0], fetched[1], fetched[2], fetched[-2], time.time()-time0)
@@ -348,4 +348,3 @@ def main(_):
 
 if __name__ == '__main__':
     tf.app.run(main)
-         
