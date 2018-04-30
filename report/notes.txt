@@ -1,0 +1,81 @@
+Hi all,
+
+
+
+Some of you have been asking what should go into the final report.
+
+First: please use the template that we provide to write the report: https://www.overleaf.com/read/yjmpxwrmfcdr   (tip: some authors submitted their paper on arXiv, where you can find the source and copy the formulas if you’re not so familiar with latexing.)
+
+Second: here’s a list of points that you should think about when writing the report:
+
+
+
+The report should be self-contained: It should give the reader a rough understanding of the original paper.
+
+Give a summary of the work, in your own words
+
+What are the motivation and problem? Give some background.
+
+How do they propose to solve it?
+
+
+Discuss the experiments conducted in the paper. A good way to go about doing this is to think about what the advantages of the model are, and what might be a good way to demonstrate that before looking at what was attempted by the authors.
+
+
+What are the authors trying to demonstrate with the experiments?
+
+Are there experiments that might demonstrate weaknesses/strengths that should be there but aren’t?
+
+Are there any flaws in the experiments they run? What are they?
+
+
+Reproducing the results. Apart from the experimental details included in the paper, you should also include details that were not included.
+
+What are some of the hyperparameters that were excluded from the paper? How important were they to get things working?
+
+Are there technical details (missing or wrong equations, etc.) that were missing from the paper? If yes, what were they and what did you do to fill in the gap. Justify your choices.
+
+
+
+Template (https://www.overleaf.com/read/yjmpxwrmfcdr):
+
+Summary of the paper
+
+Motivation (what is the problem)
+
+Proposed approach/analysis
+
+Experiment
+
+Motivation of the experiments
+
+Reproducing main results (tables, figures, etc)
+
+Discussion
+
+How is the experiment aligned with proposed approach/analysis
+
+Criticism of missing information, unmentioned drawbacks (if any)
+
+
+
+
+Additional links:
+
+This year’s reproducibility challenge:
+
+http://www.cs.mcgill.ca/~jpineau/ICLR2018-ReproducibilityChallenge.html
+
+
+
+ICML 2017 Reproducibility Workshop:
+
+https://icml.cc/Conferences/2017/Schedule?showEvent=16
+
+https://openreview.net/submissions?id=ICML.cc/2017/RML
+
+
+
+Cheers,
+
+TAs
