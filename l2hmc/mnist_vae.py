@@ -76,8 +76,17 @@ def main(_):
     del(hps_values['epoch'])
     del(hps_values['eval_samples_every'])
 
+<<<<<<< HEAD
+    train_folder = string.join(
+        [
+            str(k)+'='+str(hps_values[k])
+            for k in hps_values
+        ],
+        ',',
+=======
     train_folder = ",".join(
         [str(k)+'='+str(hps_values[k]) for k in hps_values]
+>>>>>>> 9418f91555cd4e164c32ff68a063f675b2cfc94a
     )
 
     logdir = 'logs/%s/%s' % (FLAGS.exp_id, train_folder)
@@ -305,7 +314,11 @@ def main(_):
     for e in range(hps.epoch):
         x_train = binarize_and_shuffle(float_x_train)
 
+<<<<<<< HEAD
+        for t in range(batch_per_epoch):
+=======
         for t in range(int(batch_per_epoch)):
+>>>>>>> 9418f91555cd4e164c32ff68a063f675b2cfc94a
             start = t * hps.batch_size
             end = start + hps.batch_size
 
@@ -346,4 +359,7 @@ def main(_):
 
 if __name__ == '__main__':
     tf.app.run(main)
+<<<<<<< HEAD
+=======
 
+>>>>>>> 9418f91555cd4e164c32ff68a063f675b2cfc94a
