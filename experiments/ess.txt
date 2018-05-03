@@ -1,0 +1,6 @@
+SCG: ESS L2HMC: 3.29e-01 -- ESS HMC: 6.09e-03 -- Ratio: 53
+RW: ESS L2HMC: 1.92e-01 -- ESS HMC: 4.16e-02 -- Ratio: 4.609
+GMM: ESS L2HMC: 1.77e-01 -- ESS HMC: 2.63e-04 -- Ratio: 674.620
+GMM+: ESS L2HMC: 1.92e-03 -- ESS HMC: 4.41e-05 -- Ratio: 43.634
+ICG: ESS L2HMC: 1.80e-01 -- ESS HMC: 2.49e-04 -- Ratio: 722
+1CG: ESS L2HMC: 1.00e+00 -- ESS HMC: 1.00e+00 -- Ratio: 1
